@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: movePattern 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes movePattern {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 550px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            font-weight: 300;
+        }
+
+        .selector-group {
+            margin-bottom: 25px;
+        }
+
+        .selector-group label {
+            display: block;
+            color: #fff;
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        #character {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        #character option {
+            background: rgba(100, 100, 100, 0.95);
+            color: #fff;
+        }
+
+        .character-display {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        #characterImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .character-info {
+            text-align: center;
+            padding: 20px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            display: none;
+        }
+
+        .character-info.active {
+            display: block;
+        }
+
+        .character-name {
+            color: #fff;
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .character-description {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.95em;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .counter {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .counter-text {
+            color: #fff;
+            font-size: 0.95em;
+            font-weight: 400;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Character Gallery</h1>
+            <p>Discover amazing characters</p>
+        </div>
+
+        <div class="selector-group">
+            <label for="character">Choose Character</label>
+            <select id="character" onchange="changeImage()">
+                <option value="garfield">Garfield</option>
+                <option value="odie">Odie</option>
+                <option value="nermal">Nermal</option>
+                <option value="pooky">Pooky</option>
+                <option value="jon">Jon</option>
+            </select>
+        </div>
+
+        <div class="character-display">
+            <img id="characterImage" src="images/garfield.jpg" alt="Character">
+            <div class="character-info active" id="characterInfo">
+                <div class="character-name" id="characterName">Garfield</div>
+                <div class="character-description" id="characterDescription">
+                    The lazy, orange tabby cat who loves lasagna and hates Mondays.
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="previousCharacter()">← Previous</button>
+            <button onclick="nextCharacter()">Next →</button>
+        </div>
+
+        <div class="counter">
+            <span class="counter-text" id="counter">1 of 5</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
